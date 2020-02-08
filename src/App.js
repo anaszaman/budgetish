@@ -8,15 +8,17 @@ function List({transactions,filterString,removeTransaction,editTransaction}) {
     label.indexOf(filterString) >= 0 || tags.indexOf(filterString) >= 0
   )
   const listItems = filteredTransactions.map(({amount,label,date}, index) => {
-    return (<tr>
+    return (<tr key={index}>
       <td>{date}</td><td>{label}</td><td>${amount.toFixed(2)}</td>
       <td><button onClick={editTransaction.bind(this,index)}>edit</button><button onClick={removeTransaction.bind(this, index)}>remove</button></td>
     </tr>)
   })
   return (
     <div>
-    <table><tr><th>Date</th><th>Label</th><th>Amount</th></tr>
-      {listItems}
+    <table>
+      <tbody><tr><th>Date</th><th>Label</th><th>Amount</th></tr>
+        {listItems}
+      </tbody>
     </table>
     <input readOnly value={filteredTransactions.reduce((acc, {amount}) => acc+amount, 0).toFixed(2)} /> 
     </div>
@@ -141,7 +143,7 @@ function FilterTotal({tags,getTotal}) {
     <div>
       <select onChange={(event) => {
         setTotal(getTotal(event.target.value))
-      }}><option value=""></option>{tags.map((tag) => <option value={tag}>{tag}</option>)}</select>
+      }}><option key={-1} value=""></option>{tags.map((tag, index) => <option key={index} value={tag}>{tag}</option>)}</select>
       ${total.toFixed(2)}
     </div>
   )
