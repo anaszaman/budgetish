@@ -37,19 +37,19 @@ function InputForm({ addTransaction, updateTransaction, cancelAddOrEdit, initial
   const [label, setLabel] = useState(initialData.label || "")
   const [tags, setTags] = useState(initialData.tags || [])
   return (
-    <div className="header">
-      <label>Amount:</label>
+    <div className="input-form">
+      <label>Amount:
       <input value={amount} onChange={(event) => {
         setAmount(event.target.value)
-      }} /><br />
-      <label>Label:</label>
+      }} /></label><br />
+      <label>Label:
       <input value={label} onChange={(event) => {
         setLabel(event.target.value)
-      }} /><br />
-      <label>Date:</label>
+      }} /></label><br />
+      <label>Date:
       <input type="date" value={date} onChange={(event) => {
         setDate(event.target.value)
-      }} /><br />
+      }} /></label><br />
       <InputTags tags={tags} setTags={setTags} />
       <button onClick={(event) => {
         if (amount === "" || isNaN(amount)) {
