@@ -3,7 +3,7 @@ import Files from 'react-files'
 import InputForm from './InputForm';
 
 
-function List({transactions,filterString,removeTransaction,editTransaction}) {
+function TransactionList({transactions,filterString,removeTransaction,editTransaction}) {
   const filteredTransactions = transactions.filter(({label,tags}) => 
     filterString.length === 0 || 
     label.indexOf(filterString) >= 0 || tags.indexOf(filterString) >= 0
@@ -74,14 +74,16 @@ function FilterTotal({tags,getTotal}) {
   )
 }
 
-function App() {
+function App({initialTransactions=[]}) {
   const myTransactions = localStorage.getItem('myTransactions')
   const [transactions, setTransactions] = useState(
-    myTransactions ? JSON.parse(myTransactions) : []
+    myTransactions && myTransactions.length > 0 ? JSON.parse(myTransactions) : initialTransactions
   )
   const [filterString,setFilter] = useState("")
   React.useEffect(() => {
-    localStorage.setItem('myTransactions', JSON.stringify(transactions));
+    if (transactions && transactions.length > 0) {
+      localStorage.setItem('myTransactions', JSON.stringify(transactions));
+    }
   }, [transactions])
   const cancelAddOrEdit = () => {
     setVisible(false)
@@ -124,7 +126,7 @@ function App() {
             setFilter(event.target.value)
           }}/>
         </div>
-        <List transactions={transactions} filterString={filterString} removeTransaction={removeTransaction} editTransaction={editTransaction}/>
+        {transactions.length > 0 && <TransactionList transactions={transactions} filterString={filterString} removeTransaction={removeTransaction} editTransaction={editTransaction}/>}
         <FilterTotal tags={getAllTags()} getTotal={getTotalForBudgetTag}/>
         <ExportJSONButton transactions={transactions}/>
         <ImportDropZone setTransactions={setTransactions}/>

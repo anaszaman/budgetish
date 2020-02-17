@@ -8,6 +8,24 @@ test('renders Add transaction button', () => {
   expect(buttonElement).toBeInTheDocument();
 });
 
+test('does not render transactions table', () => {
+  const { queryByRole } = render(<App />);
+  expect(queryByRole("table")).toBe(null);
+});
+
+test('renders transactions table', () => {
+  const transactions = [{
+    amount: -1,
+    label: "test transaction",
+    date: "2020-02-02",
+    tags: ["testtag"]
+  }]
+  const { getByRole } = render(<App initialTransactions={transactions}/>);
+  const tableElement = getByRole("table");
+  expect(tableElement).not.toBe(null);
+  expect(tableElement).toBeInTheDocument();
+});
+
 test('renders Import Transactions button', () => {
   const { getByText } = render(<App />);
   const buttonElement = getByText(/Import Transactions/i);
@@ -32,4 +50,3 @@ test('click Add Transactions button', () => {
   const inputForm = getByText("add");
   expect(inputForm).not.toBe(null);
 });
-
