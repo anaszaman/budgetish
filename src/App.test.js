@@ -26,6 +26,18 @@ test('renders transactions table', () => {
   expect(tableElement).toBeInTheDocument();
 });
 
+test('renders Budget button', () => {
+  const { getByLabelText } = render(<App initialBudgets={[{"tag": "groceries","amount": 100}]}/>);
+  const budgetInputElement = getByLabelText(/Budget/i);
+  expect(budgetInputElement).toBeInTheDocument();
+});
+
+test('renders Add Budget button', () => {
+  const { getByText } = render(<App />);
+  const buttonElement = getByText(/Add Budget/i);
+  expect(buttonElement).toBeInTheDocument();
+});
+
 test('renders Import Transactions button', () => {
   const { getByText } = render(<App />);
   const buttonElement = getByText(/Import Transactions/i);

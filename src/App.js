@@ -26,12 +26,12 @@ function TransactionList({transactions,filterString,removeTransaction,editTransa
   )
 }
 
-function ExportJSONButton({transactions}) {
+function ExportJSONButton({transactions,budgets}) {
   return (
     <div>
       <button onClick={async () => {
         const fileName = "transactions";
-        const json = JSON.stringify({"transactions":transactions});
+        const json = JSON.stringify({transactions,budgets});
         const blob = new Blob([json],{type:'application/json'});
         const href = await URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -45,36 +45,87 @@ function ExportJSONButton({transactions}) {
   )
 }
 
-function ImportDropZone({setTransactions}) {
+function ImportDropZone({setTransactions,setBudgets}) {
   const fileReader = new FileReader();
   fileReader.onload = (event) => {
     const json = JSON.parse(event.target.result)
+    json.transactions.sort((transaction, otherTransaction) => {
+      if (transaction.date === otherTransaction.date) {
+        return 0
+      }
+      if (transaction.date < otherTransaction.date) {
+        return -1
+      }
+
+      return 1
+    })
     setTransactions(json.transactions)
+    setBudgets(json.budgets)
   }
   return (
     <div>
       <button><Files type="file" clickable maxFiles={1}
       accepts={['.json']} 
-      onChange={(file)=> {
-        fileReader.readAsText(file[0]);
+      onChange={(files)=> {
+        fileReader.readAsText(files[0]);
       }}>Import Transactions</Files></button>
     </div>
   )
 }
 
-function FilterTotal({tags,getTotal}) {
-  const [total,setTotal] = useState(0)
+function FilterTotal({tags,index,budget,setBudgetTag,setBudgetAmount,getFilteredTotal}) {
   return (
     <div>
-      <select onChange={(event) => {
-        setTotal(getTotal(event.target.value))
+      <select value={budget.tag} onChange={(event) => {
+        setBudgetTag(index, event.target.value)
       }}><option key={-1} value=""></option>{tags.map((tag, index) => <option key={index} value={tag}>{tag}</option>)}</select>
-      ${total.toFixed(2)}
+      <label>Budget:
+        <input type="number" value={budget.amount} onChange={(event) => {
+          setBudgetAmount(index, parseFloat(event.target.value))
+        }}/></label>${(budget.amount+getFilteredTotal(budget.tag)).toFixed(2)}
     </div>
   )
 }
 
-function App({initialTransactions=[]}) {
+function FilteredTotalsList({budgets,setBudgets,tags,getFilteredTotal}) {
+  const addFilteredTotal = () => {
+    const budget = {tag:"",amount:0}
+    setBudgets([...budgets, budget])
+  }
+  //addFilteredTotal()
+  const listItems = budgets.map((budget,index) => (<li key={index}>{
+    <FilterTotal 
+      index={index} 
+      tags={tags}
+      budget={budget}
+      setBudgetTag={(index,tag) => {
+        const budget = budgets[index]
+        budget.tag = tag
+        setBudgets([...budgets.slice(0, index), budget, ...budgets.slice(index+1)])
+      }}
+      setBudgetAmount={(index,amount) => {
+        const budget = budgets[index]
+        budget.amount = amount
+        setBudgets([...budgets.slice(0, index), budget, ...budgets.slice(index+1)])
+      }}
+      getFilteredTotal={getFilteredTotal} />}</li>))
+  return (
+    <div>
+      <ul>
+        {listItems}
+        <li><button onClick={addFilteredTotal}>Add Budget Entry...</button></li>
+      </ul>
+    </div>
+  )
+}
+
+function firstOfTheMonth() {
+  const date = new Date()
+  date.setDate(1)
+  return date.toLocaleDateString('en-ca')
+}
+
+function App({initialTransactions=[],initialBudgets=[]}) {
   const myTransactions = localStorage.getItem('myTransactions')
   const [transactions, setTransactions] = useState(
     myTransactions && myTransactions.length > 0 ? JSON.parse(myTransactions) : initialTransactions
@@ -85,6 +136,14 @@ function App({initialTransactions=[]}) {
       localStorage.setItem('myTransactions', JSON.stringify(transactions));
     }
   }, [transactions])
+  const myBudgets = localStorage.getItem('myBudgets')
+  const [budgets,setBudgets] = useState(myBudgets && myBudgets.length > 0 ? JSON.parse(myBudgets) : initialBudgets)
+
+  React.useEffect(() => {
+    if (budgets && budgets.length > 0) {
+      localStorage.setItem('myBudgets', JSON.stringify(budgets));
+    }
+  }, [budgets])
   const cancelAddOrEdit = () => {
     setVisible(false)
     setInitial({})
@@ -113,7 +172,8 @@ function App({initialTransactions=[]}) {
     setVisible(true)
   }
   const getTotalForBudgetTag = function (tag) {
-    return transactions.filter((transaction) => transaction.tags.indexOf(tag) >= 0).reduce((acc,{amount}) => acc+amount, 0)
+    // filter by tag and only transactions from the current month
+    return transactions.filter((transaction) => transaction.tags.indexOf(tag) >= 0).filter((transaction) => transaction.date >= firstOfTheMonth()).reduce((acc,{amount}) => acc+amount, 0)
   }
   const [visibleForm, setVisible] = useState(false)
   const [initialData, setInitial] = useState({})
@@ -127,9 +187,9 @@ function App({initialTransactions=[]}) {
           }}/>
         </div>
         {transactions.length > 0 && <TransactionList transactions={transactions} filterString={filterString} removeTransaction={removeTransaction} editTransaction={editTransaction}/>}
-        <FilterTotal tags={getAllTags()} getTotal={getTotalForBudgetTag}/>
-        <ExportJSONButton transactions={transactions}/>
-        <ImportDropZone setTransactions={setTransactions}/>
+        <FilteredTotalsList budgets={budgets} setBudgets={setBudgets} tags={getAllTags()} getFilteredTotal={getTotalForBudgetTag}/>
+        <ExportJSONButton transactions={transactions} budgets={budgets}/>
+        <ImportDropZone setTransactions={setTransactions} setBudgets={setBudgets}/>
     </div>
   );
 }

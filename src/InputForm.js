@@ -39,7 +39,7 @@ function InputForm({ addTransaction, updateTransaction, cancelAddOrEdit, initial
   return (
     <div className="input-form">
       <label>Amount:
-      <input value={amount} onChange={(event) => {
+      <input type="number" value={amount} onChange={(event) => {
         setAmount(event.target.value)
       }} /></label><br />
       <label>Label:
