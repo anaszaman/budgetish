@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './App.css';
 
 
 function todayString() {
@@ -51,7 +52,7 @@ function InputForm({ addTransaction, updateTransaction, cancelAddOrEdit, initial
         setDate(event.target.value)
       }} /></label><br />
       <InputTags tags={tags} setTags={setTags} />
-      <button onClick={(event) => {
+      <button className="button" onClick={(event) => {
         if (amount === "" || isNaN(amount)) {
           event.preventDefault()
           setAmount("")
@@ -72,7 +73,7 @@ function InputForm({ addTransaction, updateTransaction, cancelAddOrEdit, initial
         event.preventDefault()
         setAmount("")
       }}>{initialData.index !== undefined ? "update" : "add"}</button>
-      <button onClick={cancelAddOrEdit}>cancel</button>
+      <button className="button" onClick={cancelAddOrEdit}>cancel</button>
     </div>
   )
 }

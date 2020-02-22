@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import Files from 'react-files'
+import './App.css';
 import InputForm from './InputForm';
 
 
@@ -9,14 +10,15 @@ function TransactionList({transactions,filterString,removeTransaction,editTransa
     label.indexOf(filterString) >= 0 || tags.indexOf(filterString) >= 0
   )
   const listItems = filteredTransactions.map(({amount,label,date}, index) => {
-    return (<tr key={index}>
+    return (<tr className="transaction-row" key={index}>
       <td>{date}</td><td>{label}</td><td>${amount.toFixed(2)}</td>
-      <td><button onClick={editTransaction.bind(this,index)}>edit</button><button onClick={removeTransaction.bind(this, index)}>remove</button></td>
+      <td><button className="button transaction-button" onClick={editTransaction.bind(this,index)}>edit</button>
+      <button className="button transaction-button" onClick={removeTransaction.bind(this, index)}>remove</button></td>
     </tr>)
   })
   return (
-    <div>
-    <table>
+    <div className="transactions-table">
+    <table >
       <tbody><tr><th>Date</th><th>Label</th><th>Amount</th></tr>
         {listItems}
       </tbody>
@@ -29,7 +31,7 @@ function TransactionList({transactions,filterString,removeTransaction,editTransa
 function ExportJSONButton({transactions,budgets}) {
   return (
     <div>
-      <button onClick={async () => {
+      <button className="button" onClick={async () => {
         const fileName = "transactions";
         const json = JSON.stringify({transactions,budgets});
         const blob = new Blob([json],{type:'application/json'});
@@ -64,7 +66,7 @@ function ImportDropZone({setTransactions,setBudgets}) {
   }
   return (
     <div>
-      <button><Files type="file" clickable maxFiles={1}
+      <button className="button"><Files type="file" clickable maxFiles={1}
       accepts={['.json']} 
       onChange={(files)=> {
         fileReader.readAsText(files[0]);
@@ -76,7 +78,7 @@ function ImportDropZone({setTransactions,setBudgets}) {
 function FilterTotal({tags,index,budget,setBudgetTag,setBudgetAmount,getFilteredTotal}) {
   return (
     <div>
-      <select value={budget.tag} onChange={(event) => {
+      <select className="button" value={budget.tag} onChange={(event) => {
         setBudgetTag(index, event.target.value)
       }}><option key={-1} value=""></option>{tags.map((tag, index) => <option key={index} value={tag}>{tag}</option>)}</select>
       <label>Budget:
@@ -92,7 +94,6 @@ function FilteredTotalsList({budgets,setBudgets,tags,getFilteredTotal}) {
     const budget = {tag:"",amount:0}
     setBudgets([...budgets, budget])
   }
-  //addFilteredTotal()
   const listItems = budgets.map((budget,index) => (<li key={index}>{
     <FilterTotal 
       index={index} 
@@ -113,7 +114,7 @@ function FilteredTotalsList({budgets,setBudgets,tags,getFilteredTotal}) {
     <div>
       <ul>
         {listItems}
-        <li><button onClick={addFilteredTotal}>Add Budget Entry...</button></li>
+        <li><button className="button" onClick={addFilteredTotal}>Add Budget Entry...</button></li>
       </ul>
     </div>
   )
@@ -180,7 +181,7 @@ function App({initialTransactions=[],initialBudgets=[]}) {
   return (
     <div className="todoListMain">
         {visibleForm && <InputForm addTransaction={addTransaction} updateTransaction={updateTransaction} cancelAddOrEdit={cancelAddOrEdit} initialData={initialData}/>}
-        {!visibleForm && <button onClick={() => setVisible(true)}>Add Transaction</button>}
+        {!visibleForm && <button className="button add-button" onClick={() => setVisible(true)}>Add Transaction</button>}
         <div>
           <input placeholder="Filter transactions..." onChange={(event) => {
             setFilter(event.target.value)
