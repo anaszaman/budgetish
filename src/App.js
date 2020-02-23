@@ -10,27 +10,25 @@ function TransactionList({transactions,filterString,removeTransaction,editTransa
     label.indexOf(filterString) >= 0 || tags.indexOf(filterString) >= 0
   )
   const listItems = filteredTransactions.map(({amount,label,date}, index) => {
-    return (<tr className="transaction-row" key={index}>
+    return (<tr className="transaction-row" key={index} onClick={editTransaction.bind(this,index)}>
       <td>{date}</td><td>{label}</td><td>${amount.toFixed(2)}</td>
-      <td><button className="button transaction-button" onClick={editTransaction.bind(this,index)}>edit</button>
-      <button className="button transaction-button" onClick={removeTransaction.bind(this, index)}>remove</button></td>
+      <td><button className="transaction-button" onClick={removeTransaction.bind(this, index)}>remove</button></td>
     </tr>)
   })
   return (
-    <div className="transactions-table">
-    <table >
-      <tbody><tr><th>Date</th><th>Label</th><th>Amount</th></tr>
+    <div className="transactions-section">
+    <table className="transactions-table">
+      <tbody><tr><th style={{width:"85px"}}>Date</th><th>Label</th><th>Amount</th></tr>
         {listItems}
       </tbody>
     </table>
-    <input readOnly value={filteredTransactions.reduce((acc, {amount}) => acc+amount, 0).toFixed(2)} /> 
+    <input className="number-input" readOnly value={filteredTransactions.reduce((acc, {amount}) => acc+amount, 0).toFixed(2)} />
     </div>
   )
 }
 
 function ExportJSONButton({transactions,budgets}) {
   return (
-    <div>
       <button className="button" onClick={async () => {
         const fileName = "transactions";
         const json = JSON.stringify({transactions,budgets});
@@ -43,7 +41,6 @@ function ExportJSONButton({transactions,budgets}) {
         link.click();
         document.body.removeChild(link);        
       }}>Export Transactions</button>
-    </div>
   )
 }
 
@@ -65,26 +62,24 @@ function ImportDropZone({setTransactions,setBudgets}) {
     setBudgets(json.budgets)
   }
   return (
-    <div>
       <button className="button"><Files type="file" clickable maxFiles={1}
       accepts={['.json']} 
       onChange={(files)=> {
         fileReader.readAsText(files[0]);
       }}>Import Transactions</Files></button>
-    </div>
   )
 }
 
 function FilterTotal({tags,index,budget,setBudgetTag,setBudgetAmount,getFilteredTotal}) {
   return (
-    <div>
-      <select className="button" value={budget.tag} onChange={(event) => {
+    <div style={{color: "whitesmoke"}}>
+      <select className="tag-select" value={budget.tag} onChange={(event) => {
         setBudgetTag(index, event.target.value)
       }}><option key={-1} value=""></option>{tags.map((tag, index) => <option key={index} value={tag}>{tag}</option>)}</select>
-      <label>Budget:
-        <input type="number" value={budget.amount} onChange={(event) => {
+      <label>Budget:</label>
+        <input className="number-input" type="number" value={budget.amount} onChange={(event) => {
           setBudgetAmount(index, parseFloat(event.target.value))
-        }}/></label>${(budget.amount+getFilteredTotal(budget.tag)).toFixed(2)}
+        }}/>${(budget.amount+getFilteredTotal(budget.tag)).toFixed(2)}
     </div>
   )
 }
@@ -111,7 +106,7 @@ function FilteredTotalsList({budgets,setBudgets,tags,getFilteredTotal}) {
       }}
       getFilteredTotal={getFilteredTotal} />}</li>))
   return (
-    <div>
+    <div className="budget-list">
       <ul>
         {listItems}
         <li><button className="button" onClick={addFilteredTotal}>Add Budget Entry...</button></li>
@@ -178,10 +173,16 @@ function App({initialTransactions=[],initialBudgets=[]}) {
   }
   const [visibleForm, setVisible] = useState(false)
   const [initialData, setInitial] = useState({})
+
+  if (visibleForm) {
+    return (
+      <div className="budgetish-main">
+          <InputForm addTransaction={addTransaction} updateTransaction={updateTransaction} cancelAddOrEdit={cancelAddOrEdit} initialData={initialData}/>
+      </div>
+    );
+  }
   return (
-    <div className="todoListMain">
-        {visibleForm && <InputForm addTransaction={addTransaction} updateTransaction={updateTransaction} cancelAddOrEdit={cancelAddOrEdit} initialData={initialData}/>}
-        {!visibleForm && <button className="button add-button" onClick={() => setVisible(true)}>Add Transaction</button>}
+    <div className="budgetish-main">
         <div>
           <input placeholder="Filter transactions..." onChange={(event) => {
             setFilter(event.target.value)
@@ -191,6 +192,8 @@ function App({initialTransactions=[],initialBudgets=[]}) {
         <FilteredTotalsList budgets={budgets} setBudgets={setBudgets} tags={getAllTags()} getFilteredTotal={getTotalForBudgetTag}/>
         <ExportJSONButton transactions={transactions} budgets={budgets}/>
         <ImportDropZone setTransactions={setTransactions} setBudgets={setBudgets}/>
+
+        <div className="add-button"><button onClick={() => setVisible(true)}>Add Transaction</button></div>
     </div>
   );
 }

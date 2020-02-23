@@ -12,7 +12,7 @@ function InputTags({ tags, setTags }) {
     setTags(tags.filter((tag) => tags.indexOf(tag) !== index))
   }
   return (
-    <div>
+    <div style={{color:"whitesmoke"}}>
       <ul>
         {tags.map((tag, index) => (
           <li key={index}>
@@ -40,7 +40,7 @@ function InputForm({ addTransaction, updateTransaction, cancelAddOrEdit, initial
   return (
     <div className="input-form">
       <label>Amount:
-      <input type="number" value={amount} onChange={(event) => {
+      <input className="number-input" type="number" value={amount} onChange={(event) => {
         setAmount(event.target.value)
       }} /></label><br />
       <label>Label:

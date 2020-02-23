@@ -1,27 +1,11 @@
-
-.button {
-  background-color: #555555; /* Grey */
-  border: none;
-  color: white;
-  padding: 6px 8px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  margin: 4px 2px;
-  transition-duration: 0.4s;
-  cursor: pointer;
-}
-
 .add-button {
-  background-color: white;
-  color: black;
-  border: 2px solid #555555;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
 }
 
-.add-button:hover {
-  background-color: #555555;
-  color: white;
+.number-input {
+  width: 75px;
 }
 
 .transaction-button {
@@ -35,8 +19,25 @@
 .transaction-row:hover {
   background-color: #457C95;
 }
+.transactions-section {
+  max-height: 60%;
+  overflow-y: auto;
+}
 
 .transactions-table {
-  height: 500px;
+  color: whitesmoke;
+}
+
+.budget-list {
+  max-height: 25%;
   overflow-y: auto;
+}
+
+.tag-select {
+  width: 125px;
+}
+
+.budgetish-main {
+  height: inherit;
+  width: inherit;
 }
