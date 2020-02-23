@@ -70,7 +70,7 @@ function ImportDropZone({setTransactions,setBudgets}) {
   )
 }
 
-function FilterTotal({tags,index,budget,setBudgetTag,setBudgetAmount,getFilteredTotal}) {
+function FilterTotal({tags,index,budget,setBudgetTag,setBudgetAmount,removeBudget,getFilteredTotal}) {
   return (
     <div style={{color: "whitesmoke"}}>
       <select className="tag-select" value={budget.tag} onChange={(event) => {
@@ -80,6 +80,8 @@ function FilterTotal({tags,index,budget,setBudgetTag,setBudgetAmount,getFiltered
         <input className="number-input" type="number" value={budget.amount} onChange={(event) => {
           setBudgetAmount(index, parseFloat(event.target.value))
         }}/>${(budget.amount+getFilteredTotal(budget.tag)).toFixed(2)}
+        <i className="material-icons"
+        onClick={() => removeBudget(index)}>close</i>
     </div>
   )
 }
@@ -88,6 +90,11 @@ function FilteredTotalsList({budgets,setBudgets,tags,getFilteredTotal}) {
   const addFilteredTotal = () => {
     const budget = {tag:"",amount:0}
     setBudgets([...budgets, budget])
+  }
+  const removeBudget = (index) => {
+    setBudgets(
+      budgets.filter((budget) => budgets.indexOf(budget) !== index)
+    )
   }
   const listItems = budgets.map((budget,index) => (<li key={index}>{
     <FilterTotal 
@@ -104,7 +111,8 @@ function FilteredTotalsList({budgets,setBudgets,tags,getFilteredTotal}) {
         budget.amount = amount
         setBudgets([...budgets.slice(0, index), budget, ...budgets.slice(index+1)])
       }}
-      getFilteredTotal={getFilteredTotal} />}</li>))
+      getFilteredTotal={getFilteredTotal} 
+      removeBudget={removeBudget}/>}</li>))
   return (
     <div className="budget-list">
       <ul>
