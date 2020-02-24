@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import { Cancel } from '@material-ui/icons';
 
 
 function todayString() {
@@ -17,8 +18,8 @@ function InputTags({ tags, setTags }) {
         {tags.map((tag, index) => (
           <li key={index}>
             <span>{tag}</span>
-            <i className="material-icons"
-              onClick={() => removeTags(index)}>close</i>
+            <Cancel className="material-icons"
+              onClick={() => removeTags(index)}/>
           </li>
         ))}
       </ul>

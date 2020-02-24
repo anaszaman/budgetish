@@ -18,6 +18,7 @@
 
 .transaction-row:hover {
   background-color: #457C95;
+  cursor: pointer;
 }
 .transactions-section {
   max-height: 60%;
@@ -28,9 +29,12 @@
   color: whitesmoke;
 }
 
-.budget-list {
+.budgets-section {
   max-height: 25%;
   overflow-y: auto;
+}
+.budgets-table {
+  color: whitesmoke;
 }
 
 .tag-select {
