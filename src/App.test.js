@@ -18,18 +18,17 @@ test('renders transactions table', () => {
     amount: -1,
     label: "test transaction",
     date: "2020-02-02",
-    tags: ["testtag"]
+    tags: ["groceries"]
   }]
-  const { getByRole } = render(<App initialTransactions={transactions}/>);
-  const tableElement = getByRole("table");
-  expect(tableElement).not.toBe(null);
-  expect(tableElement).toBeInTheDocument();
+  const { getAllByRole } = render(<App initialTransactions={transactions}/>);
+  const tableElements = getAllByRole("table");
+  expect(tableElements.length).toBe(2);
 });
 
-test('renders Budget button', () => {
-  const { getByLabelText } = render(<App initialBudgets={[{"tag": "groceries","amount": 100}]}/>);
-  const budgetInputElement = getByLabelText(/Budget/i);
-  expect(budgetInputElement).toBeInTheDocument();
+test('renders budget table row', () => {
+  const { getByText } = render(<App initialBudgets={[{"tag": "groceries","amount": 100}]}/>);
+  const tagSelectElement = getByText(/groceries/i);
+  expect(tagSelectElement).toBeInTheDocument();
 });
 
 test('renders Add Budget button', () => {

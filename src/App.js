@@ -73,22 +73,22 @@ function ImportDropZone({setTransactions,setBudgets}) {
 
 function FilterTotal({tags,index,budget,setBudgetTag,setBudgetAmount,removeBudget,getFilteredTotal}) {
   return (
-      <tr key={index}>
-        <td>
-      <select className="tag-select" value={budget.tag} onChange={(event) => {
-        setBudgetTag(index, event.target.value)
-      }}><option key={-1} value=""></option>{tags.map((tag, index) => <option key={index} value={tag}>{tag}</option>)}</select>
+    <tr key={index}>
+      <td>
+        <select className="tag-select" value={budget.tag} onChange={(event) => {
+          setBudgetTag(index, event.target.value)
+        }}><option key={-1} value=""></option>{tags.map((tag, tagIndex) => <option key={tagIndex} value={tag}>{tag}</option>)}</select>
       </td><td>
         <input className="number-input" type="number" value={budget.amount} onChange={(event) => {
           setBudgetAmount(index, parseFloat(event.target.value))
         }}/>
-        </td>
-        <td>${(budget.amount+getFilteredTotal(budget.tag)).toFixed(2)}</td>
-        <td>
+      </td>
+      <td>${(budget.amount+getFilteredTotal(budget.tag)).toFixed(2)}</td>
+      <td>
         <Cancel className="material-icons" style={{verticalAlign:"middle"}}
         onClick={() => removeBudget(index)}/>
-        </td>
-        </tr>
+      </td>
+    </tr>
   )
 }
 
@@ -104,7 +104,8 @@ function FilteredTotalsList({budgets,setBudgets,tags,getFilteredTotal}) {
   }
   const listItems = budgets.map((budget,index) => 
     <FilterTotal 
-      index={index} 
+      index={index}
+      key={index} 
       tags={tags}
       budget={budget}
       setBudgetTag={(index,tag) => {
@@ -125,7 +126,7 @@ function FilteredTotalsList({budgets,setBudgets,tags,getFilteredTotal}) {
         <tbody>
           <tr><th>Category</th><th>Budgeted Amount</th><th>Leftover</th></tr>
         {listItems}
-        <tr><button className="button" onClick={addFilteredTotal}>Add Budget Entry...</button></tr>
+        <tr><td><button className="button" onClick={addFilteredTotal}>Add Budget Entry...</button></td></tr>
         </tbody>
       </table>
     </div>
@@ -206,7 +207,7 @@ function App({initialTransactions=[],initialBudgets=[]}) {
           }}/>
         </div>
         {transactions.length > 0 && <TransactionList transactions={transactions} filterString={filterString} removeTransaction={removeTransaction} editTransaction={editTransaction}/>}
-        <FilteredTotalsList budgets={budgets} setBudgets={setBudgets} tags={getAllTags()} getFilteredTotal={getTotalForBudgetTag}/>
+        {transactions.length > 0 && <FilteredTotalsList budgets={budgets} setBudgets={setBudgets} tags={getAllTags()} getFilteredTotal={getTotalForBudgetTag}/>}
         <ExportJSONButton transactions={transactions} budgets={budgets}/>
         <ImportDropZone setTransactions={setTransactions} setBudgets={setBudgets}/>
 
