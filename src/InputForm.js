@@ -44,15 +44,15 @@ function InputForm({ addTransaction, updateTransaction, cancelAddOrEdit, initial
       <label>Amount:
       <input className="number-input" type="number" value={amount} onChange={(event) => {
         setAmount(event.target.value)
-      }} /></label><br />
+      }} /></label>
       <label>Label:
       <input value={label} onChange={(event) => {
         setLabel(event.target.value)
-      }} /></label><br />
+      }} /></label>
       <label>Date:
       <input type="date" value={date} onChange={(event) => {
         setDate(event.target.value)
-      }} /></label><br />
+      }} /></label>
       <InputTags tags={tags} setTags={setTags} />
       <button className="button" onClick={(event) => {
         if (amount === "" || isNaN(amount)) {
