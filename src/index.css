@@ -28,10 +28,9 @@ code {
 }
 
 input {
-  color: -internal-light-dark-color(white, black);
-  background-color: -internal-light-dark-color(black, white);
   color: whitesmoke;
-  background-color: #666666;
+  background-color: #777777;
+  font-size: 12pt;
 }
 
 label {
@@ -66,4 +65,16 @@ button {
 ul {
   list-style-type: none;
   padding-inline-start: 20px;
+}
+
+::-webkit-input-placeholder { /* Edge */
+  color: #333333;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: #333333;
+}
+
+::placeholder {
+  color: #333333;
 }
