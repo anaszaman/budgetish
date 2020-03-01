@@ -198,7 +198,7 @@ function App({initialTransactions=[],initialBudgets=[]}) {
   if (visibleForm) {
     return (
       <div className="budgetish-main">
-          <InputForm getExistingTags={getExistingTags} getExistingLabels={getExistingLabels} addTransaction={addTransaction} updateTransaction={updateTransaction} cancelAddOrEdit={cancelAddOrEdit} initialData={initialData}/>
+          <InputForm existingTags={getExistingTags()} existingLabels={getExistingLabels()} addTransaction={addTransaction} updateTransaction={updateTransaction} cancelAddOrEdit={cancelAddOrEdit} initialData={initialData}/>
       </div>
     );
   }

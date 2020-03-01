@@ -10,6 +10,9 @@ function todayString() {
 
 
 const renderSuggestions = ({suggestions,onClickSuggestion,filterString}) => {
+  if (!suggestions) {
+    return;
+  }
   const filteredSuggestions = suggestions.filter((suggestion) => suggestion.toLowerCase().indexOf(filterString) >= 0)
   if (filteredSuggestions.length === 0 || filterString.length === 0) {
     return;
@@ -19,7 +22,7 @@ const renderSuggestions = ({suggestions,onClickSuggestion,filterString}) => {
     </ul></div>)
 }
 
-function InputTags({ getExistingTags, tags, setTags }) {
+function InputTags({ existingTags, tags, setTags }) {
   const [inputValue,setInputValue] = useState("")
   const removeTags = function (index) {
     setTags(tags.filter((tag) => tags.indexOf(tag) !== index))
@@ -49,13 +52,13 @@ function InputTags({ getExistingTags, tags, setTags }) {
       onChange={(event) =>
         setInputValue(event.target.value.trim().toLowerCase())
       }/>
-      {renderSuggestions({suggestions:getExistingTags(), onClickSuggestion, filterString:inputValue})}
+      {renderSuggestions({suggestions:existingTags, onClickSuggestion, filterString:inputValue})}
     </div>
   )
 }
 
 
-function InputForm({ getExistingTags,getExistingLabels,addTransaction, updateTransaction, cancelAddOrEdit, initialData }) {
+function InputForm({ existingTags,existingLabels,addTransaction, updateTransaction, cancelAddOrEdit, initialData }) {
   const [date, setDate] = useState(initialData.date || todayString())
   const [amount, setAmount] = useState(initialData.amount || "")
   const [label, setLabel] = useState(initialData.label || "")
@@ -73,13 +76,13 @@ function InputForm({ getExistingTags,getExistingLabels,addTransaction, updateTra
       <input value={label} onChange={(event) => {
         setLabel(event.target.value)
       }} />
-      {renderSuggestions({suggestions:getExistingLabels(), onClickSuggestion, filterString:label.trim().toLowerCase()})}
+      {renderSuggestions({suggestions:existingLabels, onClickSuggestion, filterString:label.trim().toLowerCase()})}
       </label>
       <label>Date:
       <input type="date" value={date} onChange={(event) => {
         setDate(event.target.value)
       }} /></label>
-      <InputTags getExistingTags={getExistingTags} tags={tags} setTags={setTags} />
+      <InputTags existingTags={existingTags} tags={tags} setTags={setTags} />
       <button className="button" onClick={(event) => {
         if (amount === "" || isNaN(amount)) {
           event.preventDefault()
