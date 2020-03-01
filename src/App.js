@@ -31,7 +31,7 @@ function TransactionList({transactions,filterString,removeTransaction,editTransa
 function ExportJSONButton({transactions,budgets}) {
   return (
       <button className="button" onClick={async () => {
-        const fileName = "transactions";
+        const fileName = `transactions_${new Date().toLocaleDateString("en-ca")}`;
         const json = JSON.stringify({transactions,budgets});
         const blob = new Blob([json],{type:'application/json'});
         const href = await URL.createObjectURL(blob);
