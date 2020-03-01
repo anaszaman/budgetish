@@ -204,8 +204,8 @@ function App({initialTransactions=[],initialBudgets=[]}) {
   }
   return (
     <div className="budgetish-main">
-        <div>
-          <input placeholder="Filter transactions..." onChange={(event) => {
+        <div style={{margin:"10px"}}>
+          <input style={{width: "100%",height:"30px"}} placeholder="Filter transactions..." onChange={(event) => {
             setFilter(event.target.value)
           }}/>
         </div>

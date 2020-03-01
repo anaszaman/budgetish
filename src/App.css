@@ -1,7 +1,6 @@
 .add-button {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
+  float: right;
+  top: 30px;
 }
 
 .number-input {
@@ -44,4 +43,6 @@
 .budgetish-main {
   height: inherit;
   width: inherit;
+  max-width: fit-content;
+  display: inline-block;
 }

@@ -20,6 +20,7 @@ html {
 #root {
   height: inherit;
   width: inherit;
+  text-align: center;
 }
 
 code {
