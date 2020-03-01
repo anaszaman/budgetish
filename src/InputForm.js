@@ -3,15 +3,31 @@ import './App.css';
 import './InputForm.css'
 import { Cancel } from '@material-ui/icons';
 
-
 function todayString() {
   const datetime = new Date()
   return datetime.toLocaleDateString('en-ca')
 }
 
-function InputTags({ tags, setTags }) {
+
+const renderSuggestions = ({suggestions,onClickSuggestion,filterString}) => {
+  const filteredSuggestions = suggestions.filter((suggestion) => suggestion.toLowerCase().indexOf(filterString) >= 0)
+  if (filteredSuggestions.length === 0 || filterString.length === 0) {
+    return;
+  }
+  return (<div className="suggestions"><ul>
+      {filteredSuggestions.map((suggestion,index) => <li key={index} onClick={onClickSuggestion}>{suggestion}</li>)}
+    </ul></div>)
+}
+
+function InputTags({ getExistingTags, tags, setTags }) {
+  const [inputValue,setInputValue] = useState("")
   const removeTags = function (index) {
     setTags(tags.filter((tag) => tags.indexOf(tag) !== index))
+  }
+
+  const onClickSuggestion = (event) => {
+    setTags([...tags, event.target.innerHTML])
+    setInputValue("")
   }
   return (
     <div style={{color:"whitesmoke"}}>
@@ -24,21 +40,29 @@ function InputTags({ tags, setTags }) {
           </li>
         ))}
       </ul>
-      <input placeholder="press enter to add tags" onKeyUp={(event) => {
+      <input placeholder={inputValue.length === 0 ? "press enter to add tags" : null} value={inputValue.length !== 0 ? inputValue : ""} onKeyUp={(event) => {
         if (event.key === "Enter" && event.target.value !== "") {
           setTags([...tags, event.target.value])
-          event.target.value = ""
+          setInputValue("")
         }
-      }} />
+      }}
+      onChange={(event) =>
+        setInputValue(event.target.value.trim().toLowerCase())
+      }/>
+      {renderSuggestions({suggestions:getExistingTags(), onClickSuggestion, filterString:inputValue})}
     </div>
   )
 }
 
-function InputForm({ addTransaction, updateTransaction, cancelAddOrEdit, initialData }) {
+
+function InputForm({ getExistingTags,getExistingLabels,addTransaction, updateTransaction, cancelAddOrEdit, initialData }) {
   const [date, setDate] = useState(initialData.date || todayString())
   const [amount, setAmount] = useState(initialData.amount || "")
   const [label, setLabel] = useState(initialData.label || "")
   const [tags, setTags] = useState(initialData.tags || [])
+  const onClickSuggestion = (event) => {
+    setLabel(event.target.innerHTML);
+  }
   return (
     <div className="input-form">
       <label>Amount:
@@ -48,12 +72,14 @@ function InputForm({ addTransaction, updateTransaction, cancelAddOrEdit, initial
       <label>Label:
       <input value={label} onChange={(event) => {
         setLabel(event.target.value)
-      }} /></label>
+      }} />
+      {renderSuggestions({suggestions:getExistingLabels(), onClickSuggestion, filterString:label.trim().toLowerCase()})}
+      </label>
       <label>Date:
       <input type="date" value={date} onChange={(event) => {
         setDate(event.target.value)
       }} /></label>
-      <InputTags tags={tags} setTags={setTags} />
+      <InputTags getExistingTags={getExistingTags} tags={tags} setTags={setTags} />
       <button className="button" onClick={(event) => {
         if (amount === "" || isNaN(amount)) {
           event.preventDefault()

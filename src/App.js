@@ -177,8 +177,11 @@ function App({initialTransactions=[],initialBudgets=[]}) {
       transactions.filter((transaction) => transactions.indexOf(transaction) !== index)
     )
   }
-  const getAllTags = function() {
+  const getExistingTags = function() {
     return transactions.map(({tags}) => tags).reduce((acc, tags) => [...acc, ...tags.filter((tag) => acc.indexOf(tag) < 0)], [])
+  }
+  const getExistingLabels = function() {
+    return transactions.map(({label}) => label).reduce((acc, label) => acc.indexOf(label) < 0 ? [...acc, label] : acc, [])
   }
   const editTransaction = function(index) {
     console.log(JSON.stringify(index))
@@ -195,7 +198,7 @@ function App({initialTransactions=[],initialBudgets=[]}) {
   if (visibleForm) {
     return (
       <div className="budgetish-main">
-          <InputForm addTransaction={addTransaction} updateTransaction={updateTransaction} cancelAddOrEdit={cancelAddOrEdit} initialData={initialData}/>
+          <InputForm getExistingTags={getExistingTags} getExistingLabels={getExistingLabels} addTransaction={addTransaction} updateTransaction={updateTransaction} cancelAddOrEdit={cancelAddOrEdit} initialData={initialData}/>
       </div>
     );
   }
@@ -207,7 +210,7 @@ function App({initialTransactions=[],initialBudgets=[]}) {
           }}/>
         </div>
         {transactions.length > 0 && <TransactionList transactions={transactions} filterString={filterString} removeTransaction={removeTransaction} editTransaction={editTransaction}/>}
-        {transactions.length > 0 && <FilteredTotalsList budgets={budgets} setBudgets={setBudgets} tags={getAllTags()} getFilteredTotal={getTotalForBudgetTag}/>}
+        {transactions.length > 0 && <FilteredTotalsList budgets={budgets} setBudgets={setBudgets} tags={getExistingTags()} getFilteredTotal={getTotalForBudgetTag}/>}
         <ExportJSONButton transactions={transactions} budgets={budgets}/>
         <ImportDropZone setTransactions={setTransactions} setBudgets={setBudgets}/>
 

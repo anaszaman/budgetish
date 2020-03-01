@@ -3,3 +3,7 @@
     display: grid;
     text-align: center;
 }
+
+.suggestions {
+  background-color: #777777;
+}
