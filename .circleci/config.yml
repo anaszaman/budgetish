@@ -38,13 +38,13 @@ jobs:
       # run tests!
       - run: CI=true npm test
   deploy:
-    machine:
-      enabled: true
+    docker:
+      - image: circleci/node:13.7.0
     working_directory: ~/repo
     steps:
       - checkout
       - run: npm run build
-      - firebase-deploy/deploy:
+      - firebase-deploy:
           token: ${FIREBASE_TOKEN}
 
 workflows:
