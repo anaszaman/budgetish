@@ -38,6 +38,9 @@ jobs:
       # run tests!
       - run: CI=true npm test
   deploy:
+    machine:
+      enabled: true
+    working_directory: ~/repo
     steps:
       - checkout
       - run: npm run build
