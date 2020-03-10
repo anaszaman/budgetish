@@ -2,7 +2,7 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
 orbs:
   firebase-deploy: cloudliner/firebase-deploy@0.0.2
 jobs:
@@ -44,11 +44,11 @@ jobs:
     steps:
       - checkout
       - run: npm run build
-      - firebase-deploy:
+      - firebase-deploy/deploy:
           token: ${FIREBASE_TOKEN}
 
 workflows:
-  version: 2
+  version: 2.1
   build-and-deploy:
     jobs:
       - build
