@@ -45,4 +45,5 @@
   width: inherit;
   max-width: fit-content;
   display: inline-block;
+  text-align: left;
 }
