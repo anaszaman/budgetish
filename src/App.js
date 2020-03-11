@@ -53,7 +53,7 @@ function ImportDropZone({setTransactions,setBudgets}) {
       if (transaction.date === otherTransaction.date) {
         return 0
       }
-      if (transaction.date < otherTransaction.date) {
+      if (transaction.date > otherTransaction.date) {
         return -1
       }
 
@@ -164,7 +164,7 @@ function App({initialTransactions=[],initialBudgets=[]}) {
   }
   const addTransaction = (transaction) => {
     setVisible(false)
-    setTransactions([...transactions,transaction])
+    setTransactions([transaction, ...transactions])
   }
   const updateTransaction = function (index, transaction) {
     setVisible(false)
