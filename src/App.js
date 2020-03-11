@@ -152,6 +152,7 @@ function App({initialTransactions=[],initialBudgets=[]}) {
   }, [transactions])
   const myBudgets = localStorage.getItem('myBudgets')
   const [budgets,setBudgets] = useState(myBudgets && myBudgets.length > 0 ? JSON.parse(myBudgets) : initialBudgets)
+  const [archive,setArchive] = useState({});
 
   React.useEffect(() => {
     if (budgets && budgets.length > 0) {
@@ -192,9 +193,40 @@ function App({initialTransactions=[],initialBudgets=[]}) {
     // filter by tag and only transactions from the current month
     return transactions.filter((transaction) => transaction.tags.indexOf(tag) >= 0).filter((transaction) => transaction.date >= firstOfTheMonth()).reduce((acc,{amount}) => acc+amount, 0)
   }
+  const getPreviousMonths = () => {
+    return transactions
+      .filter((transaction) => transaction.date < firstOfTheMonth())
+      .map(({date}) => {
+        const [year,month] = date.split('-')
+        return {year,month}
+      })
+      .reduce((acc,yearMonthObj) => acc.filter(({month,year}) => yearMonthObj.month === month && yearMonthObj.year === year).length ? acc : [...acc,yearMonthObj], [])
+  }
+  const collapseAndDisplayTransactions = function () {
+    let newArchive = []
+    for (const month of getPreviousMonths()) {
+      const filteredTransactions = transactions.filter((transaction) => transaction.date.indexOf(`${month.year}-${month.month}`) === 0)
+      const totalIncome = filteredTransactions.reduce((acc,{amount}) => amount > 0 ? acc+amount : acc, 0).toFixed(2)
+      const totalExpenses = filteredTransactions.reduce((acc,{amount}) => amount < 0 ? acc+amount : acc, 0).toFixed(2)
+      newArchive.push({month:`${month.year}-${month.month}`,income:totalIncome, expenses: totalExpenses})
+    }
+    setArchive(newArchive)
+    setVisibleArchive(true);
+  }
+  const displayArchives = () => {
+    const archivedMonths = archive.map(({month,income,expenses},index) => <tr key={index}><td>{month}</td><td>{income}</td><td>{expenses}</td></tr>)
+    return (<div><table><tbody><tr><th>Month</th><th>Income</th><th>Expenses</th></tr>{archivedMonths}</tbody></table></div>)
+  }
   const [visibleForm, setVisible] = useState(false)
   const [initialData, setInitial] = useState({})
-
+  const [visibleArchive, setVisibleArchive] = useState(false)
+  if (visibleArchive) {
+    return (
+      <div className="budgetish-main">
+        {displayArchives()}
+      </div>
+    );
+  }
   if (visibleForm) {
     return (
       <div className="budgetish-main">
@@ -214,6 +246,7 @@ function App({initialTransactions=[],initialBudgets=[]}) {
         <ExportJSONButton transactions={transactions} budgets={budgets}/>
         <ImportDropZone setTransactions={setTransactions} setBudgets={setBudgets}/>
 
+        <div><button onClick={() => collapseAndDisplayTransactions()}>Archive Past Transaction</button></div>
         <div className="add-button"><button onClick={() => setVisible(true)}>Add Transaction</button></div>
     </div>
   );
