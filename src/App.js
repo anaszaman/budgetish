@@ -6,11 +6,15 @@ import { Cancel } from '@material-ui/icons';
 
 
 function TransactionList({transactions,filterString,removeTransaction,editTransaction}) {
-  const filteredTransactions = transactions.filter(({label,tags}) => 
-    filterString.length === 0 || 
-    label.toLowerCase().indexOf(filterString.toLowerCase()) >= 0 || tags.indexOf(filterString) >= 0
+  const filteredTransactions = transactions.reduce((acc, transaction, index) => {
+      const {label,tags} = transaction
+      const shouldInclude = filterString.length === 0 || 
+      label.toLowerCase().indexOf(filterString.toLowerCase()) >= 0 || tags.indexOf(filterString.toLowerCase()) >= 0
+
+      return shouldInclude ? [...acc, {...transaction, index}] : acc
+    }, []
   )
-  const listItems = filteredTransactions.map(({amount,label,date}, index) => {
+  const listItems = filteredTransactions.map(({amount,label,date,index}) => {
     return (<tr className="transaction-row" key={index} onClick={editTransaction.bind(this,index)}>
       <td>{date}</td><td>{label}</td><td>${amount.toFixed(2)}</td>
       <td><button className="transaction-button" onClick={removeTransaction.bind(this, index)}>remove</button></td>
@@ -147,7 +151,7 @@ function App({initialTransactions=[],initialBudgets=[],initialArchives=[]}) {
     initialTransactions = parsedTransactions.length > 0 ? parsedTransactions : initialTransactions
   }
   const [transactions, setTransactions] = useState(initialTransactions)
-  const [filterString,setFilter] = useState("")
+  const [filterString,setFilterString] = useState("")
   React.useEffect(() => {
     if (transactions) {
       localStorage.setItem('myTransactions', JSON.stringify(transactions));
@@ -274,8 +278,8 @@ function App({initialTransactions=[],initialBudgets=[],initialArchives=[]}) {
     <div className="budgetish-main">
         <>
         <div style={{margin:"10px"}}>
-          <input style={{width: "100%",height:"30px"}} placeholder="Filter transactions..." onChange={(event) => {
-            setFilter(event.target.value)
+          <input style={{width: "100%",height:"30px"}} placeholder={filterString.length===0 ?"Filter transactions..." : null}  value={filterString.length!==0 ? filterString : ""} onChange={(event) => {
+            setFilterString(event.target.value)
           }}/>
         </div>
         {transactions.length > 0 && <TransactionList transactions={transactions} filterString={filterString} removeTransaction={removeTransaction} editTransaction={editTransaction}/>}
