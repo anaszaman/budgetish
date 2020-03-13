@@ -13,20 +13,20 @@ test('does not render transactions table', () => {
   expect(queryByRole("table")).toBe(null);
 });
 
+const transactions = [{
+  amount: -1,
+  label: "test transaction",
+  date: "2020-02-02",
+  tags: ["groceries"]
+}]
 test('renders transactions table', () => {
-  const transactions = [{
-    amount: -1,
-    label: "test transaction",
-    date: "2020-02-02",
-    tags: ["groceries"]
-  }]
   const { getAllByRole } = render(<App initialTransactions={transactions}/>);
   const tableElements = getAllByRole("table");
   expect(tableElements.length).toBe(2);
 });
 
 test('renders budget table row', () => {
-  const { getByText } = render(<App initialBudgets={[{"tag": "groceries","amount": 100}]}/>);
+  const { getByText } = render(<App initialTransactions={transactions} initialBudgets={[{"tag": "groceries","amount": 100}]}/>);
   const tagSelectElement = getByText(/groceries/i);
   expect(tagSelectElement).toBeInTheDocument();
 });
