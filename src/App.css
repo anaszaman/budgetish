@@ -24,16 +24,14 @@
   overflow-y: auto;
 }
 
-.transactions-table {
-  color: whitesmoke;
-}
-
 .budgets-section {
   max-height: 25%;
   overflow-y: auto;
 }
-.budgets-table {
-  color: whitesmoke;
+
+.archives-section {
+  max-height: 90%;
+  overflow-y: auto;
 }
 
 .tag-select {

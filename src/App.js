@@ -226,13 +226,25 @@ function App({initialTransactions=[],initialBudgets=[],initialArchives=[]}) {
       const filteredTransactions = transactions.filter((transaction) => transaction.date.indexOf(`${month.year}-${month.month}`) === 0)
       const totalIncome = filteredTransactions.reduce((acc,{amount}) => amount > 0 ? acc+amount : acc, 0).toFixed(2)
       const totalExpenses = filteredTransactions.reduce((acc,{amount}) => amount < 0 ? acc+amount : acc, 0).toFixed(2)
-      newArchive.push({month:`${month.year}-${month.month}`,income:totalIncome, expenses: totalExpenses})
+      const totalsByLabel = filteredTransactions.reduce((acc,{label,amount}) => {
+        const prevAmount = acc[label] || 0
+        acc[label] = prevAmount+amount
+        return acc
+      }, {})
+      newArchive.push({month:`${month.year}-${month.month}`,income:totalIncome, expenses: totalExpenses, totalsByLabel})
     }
     return newArchive
   }
   const displayArchives = () => {
-    const archivedMonths = collapseTransactions().map(({month,income,expenses},index) => <tr key={index}><td>{month}</td><td>${income}</td><td>${expenses}</td></tr>)
-    return (<div><table><tbody><tr><th>Month</th><th>Income</th><th>Expenses</th></tr>{archivedMonths}</tbody></table></div>)
+    const displayTotalsByLabel = (totalsByLabel) => {
+      let elements = []
+      for (const label in totalsByLabel) {
+        elements.push(<>{label}:{totalsByLabel[label]}<br/></>)
+      }
+      return elements
+    }
+    const archivedMonths = collapseTransactions().map(({month,income,expenses,totalsByLabel},index) => <tr key={index}><td>{month}</td><td>${income}</td><td>${expenses}</td><td>{displayTotalsByLabel(totalsByLabel)}</td></tr>)
+    return (<div className="archives-section"><table><tbody><tr><th>Month</th><th>Income</th><th>Expenses</th><th>Totals By Label</th></tr>{archivedMonths}</tbody></table></div>)
   }
   const [visibleForm, setVisible] = useState(false)
   const [initialData, setInitial] = useState({})
