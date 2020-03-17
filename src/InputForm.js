@@ -18,7 +18,7 @@ const renderSuggestions = ({suggestions,onClickSuggestion,filterString}) => {
     return;
   }
   return (<div className="suggestions"><ul>
-      {filteredSuggestions.map((suggestion,index) => <li key={index} onClick={onClickSuggestion}>{suggestion}</li>)}
+      {filteredSuggestions.map((suggestion,index) => <li key={index} onClick={onClickSuggestion.bind(null, suggestion)}>{suggestion}</li>)}
     </ul></div>)
 }
 
@@ -28,8 +28,8 @@ function InputTags({ existingTags, tags, setTags }) {
     setTags(tags.filter((tag) => tags.indexOf(tag) !== index))
   }
 
-  const onClickSuggestion = (event) => {
-    setTags([...tags, event.target.innerHTML])
+  const onClickSuggestion = (suggestion) => {
+    setTags([...tags, suggestion])
     setInputValue("")
   }
   return (
@@ -63,8 +63,8 @@ function InputForm({ existingTags,existingLabels,addTransaction, updateTransacti
   const [amount, setAmount] = useState(initialData.amount || "")
   const [label, setLabel] = useState(initialData.label || "")
   const [tags, setTags] = useState(initialData.tags || [])
-  const onClickSuggestion = (event) => {
-    setLabel(event.target.innerHTML);
+  const onClickSuggestion = (suggestion) => {
+    setLabel(suggestion);
   }
   return (
     <div className="input-form">
