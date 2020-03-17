@@ -194,7 +194,8 @@ function App({initialTransactions=[],initialBudgets=[],initialArchives=[]}) {
     setInitial({})
     setTransactions([...transactions.slice(0, index), transaction, ...transactions.slice(index+1)])
   }
-  const removeTransaction = function(index) {
+  const removeTransaction = function(index, event) {
+    event.stopPropagation()
     console.log(JSON.stringify(index))
     setTransactions(
       transactions.filter((transaction) => transactions.indexOf(transaction) !== index)
